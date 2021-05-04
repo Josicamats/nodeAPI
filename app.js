@@ -1,5 +1,5 @@
 'use stricts'
-
+require('dotenv').config()
 const express = require('express'),
     favicon = require('serve-favicon'),
     //request = require('request'),
@@ -12,7 +12,8 @@ const express = require('express'),
     viewDir = `${__dirname}/views`,
     port = (process.env.PORT || 3000),
     app = express()
-    
+
+
 
 
 app

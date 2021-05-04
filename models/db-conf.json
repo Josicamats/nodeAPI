@@ -1,6 +1,6 @@
 {
     "mongo" : {
-        "host" : "https://powerful-tundra-41808.herokuapp.com/",
+        "host" : "localhost/powerful-tundra-41808",
         "db" : "exchange"
     }
 }
