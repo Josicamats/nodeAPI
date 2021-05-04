@@ -1,6 +1,6 @@
 {
     "mongo" : {
-        "host" : "localhost/powerful-tundra-41808",
+        "host" : "localhost:27017",
         "db" : "exchange"
     }
 }
