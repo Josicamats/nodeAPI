@@ -20,7 +20,7 @@ const AccountSchema = new Schema({
 //`mongodb:\/\/${conf.mongo.host}/${conf.mongo.db}`
 //mongoose.connect(`mongodb:\/\/${conf.mongo.host}/${conf.mongo.db}`, { useNewUrlParser: true,  useUnifiedTopology: true });
 
-mongoose.connect(`mongodb+srv:\/\/${process.env.DB_USER}:${process.env.DB_PASS}${process.env.MONGODB_URI}/${process.env.MONGODB_DB}?retryWrites=true&w=majority`,
+mongoose.connect(process.env.MONGODB_URI,
 { useNewUrlParser: true , useUnifiedTopology: true })
 .then(()=>{ return console.log(`Connected to database:${process.env.MONGODB_DB} on host: ${process.env.MONGODB_URI}`)
  })
