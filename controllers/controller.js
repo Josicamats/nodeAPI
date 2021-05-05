@@ -38,7 +38,7 @@ CryptoController.save = (req, res, next) =>
    }
    console.log(deposit)
 
-   CryptoModel.save(deposit, () => res.redirect('/') )
+   CryptoModel.save(deposit, () => console.log('termino el save') )
 }
 
 CryptoController.delete = (req, res, next) => 

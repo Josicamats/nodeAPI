@@ -24,8 +24,9 @@ CryptoModel.getOne = (id, cb) => {
 
 
 CryptoModel.save = (data, cb) => {
+    var id = new mongoose.Types.ObjectId(data._id)
     connection
-        .countDocuments({_id : data._id})
+        .countDocuments({_id : id})  
         .exec((err, countDocuments) => {
             if(err) throw err
             console.log(`Cantidad de documentos: ${countDocuments}`)
@@ -33,7 +34,7 @@ CryptoModel.save = (data, cb) => {
             if(countDocuments == 0)
             {
                 var id = new mongoose.Types.ObjectId()
-                connection.create({_id : id, accBalanceARS : data.amount, accBalanceBTC : 0.00}, (err) => {
+                connection.create({_id : id, balanceARS : data.amount, balanceBTC : 0.00}, (err) => {
                         if (err) throw err
                         cb()
                     })
@@ -41,8 +42,8 @@ CryptoModel.save = (data, cb) => {
             else if(countDocuments == 1)
             {
                 var amount = parseFloat(data.amount)
-                console.log(`${amount}`)
-                connection.findOneAndUpdate({_id : data._id}, { $inc : { accBalanceARS : amount } }, {useFindAndModify: false}, (err) => {
+                //console.log(`${amount}`)
+                connection.findOneAndUpdate({_id : id}, { $inc : { balanceARS : amount } }, {useFindAndModify: false}, (err) => {
                     if(err) throw err
                     cb()
                 })

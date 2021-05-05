@@ -5,10 +5,8 @@ const conf = require('./db-conf')
 const {Schema} = mongoose
 const AccountSchema = new Schema({
         _id : String,
-        accARS : String,
-        accBTC : String,
-        accBalanceARS: Number,
-        accBalanceBTC : Number
+        balanceARS: Number,
+        balanceBTC : Number
     },
     {
         collection : "accounts"
