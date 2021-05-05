@@ -1,6 +1,8 @@
 'use stricts'
+
+const express = require('express')
 require('dotenv').config()
-const express = require('express'),
+const
     favicon = require('serve-favicon'),
     //request = require('request'),
     //jade = require('jade'),
