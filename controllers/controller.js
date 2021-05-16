@@ -3,6 +3,20 @@
 var CryptoModel = require('../models/model'),
     CryptoController = () => {}
 
+
+CryptoController.getOne = (req, res, next) => 
+{
+    let id = req.params.id
+    CryptoModel.getOne(id, (docs) => {
+            
+            let locals = {
+                 title : 'Saldo de cuenta:',
+                 data: docs
+                           }
+            res.send(locals)
+     })
+}
+
 CryptoController.getAll = (req, res, next) => 
 {
     CryptoModel.getAll((docs) => {
@@ -11,19 +25,6 @@ CryptoController.getAll = (req, res, next) =>
                  title : 'Lista de cuenta',
                  data: docs
                         }
-            res.send(locals)
-    })
-}
-
-CryptoController.getOne = (req, res, next) => 
-{
-    let id = req.params.id
-    console.log(id)
-    CryptoModel.getOne(id, (docs) => {
-            let locals = {
-                    title : 'Obtener saldo',
-                    docs : docs
-            }
             res.send(locals)
     })
 }
@@ -38,7 +39,7 @@ CryptoController.save = (req, res, next) =>
    }
    console.log(deposit)
 
-   CryptoModel.save(deposit, () => console.log('termino el save') )
+   CryptoModel.save(deposit, () => res.send(`El deposito se realizó correctamente`))
 }
 
 CryptoController.delete = (req, res, next) => 

@@ -1,11 +1,11 @@
 'use stricts'
 
 const express = require('express')
+const url = require('url')
+const querystring = require('querystring')
 require('dotenv').config()
 const
     favicon = require('serve-favicon'),
-    //request = require('request'),
-    //jade = require('jade'),
     morgan = require('morgan'),
     restFul = require('express-method-override')('_method'),
     routes = require('./routes/router'),
@@ -16,12 +16,9 @@ const
     app = express()
 
 
-
-
 app
     //Configurando App
     .set('views', viewDir)
-    .set('view engine', 'jade')
     .set('port', port)
     //ejecutando middlewares
     .use( favicon(faviconURL))
@@ -32,6 +29,5 @@ app
     //ejecuto enrutador
     .use(publicDir)
     .use(routes)
-    //.use(request)
 
 module.exports = app
