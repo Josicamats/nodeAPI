@@ -1,7 +1,9 @@
 'use stricts'
 
 const express = require('express')
-const url = require('url')
+global.fetch = require("node-fetch")
+global.request = require('request')
+global.got = require('got')
 const querystring = require('querystring')
 require('dotenv').config()
 const
