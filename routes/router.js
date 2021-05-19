@@ -22,9 +22,14 @@ router
         .get('/btcvalue/:ids&:currency', function(req, res){
             let options = {
                 url: 'https://api.coingecko.com/api/v3/simple/price?ids='+req.params.ids+'&vs_currencies='+req.params.currency
-            };
+            }
             request(options).pipe(res);
-        });
+        })
+        .get('/time', function(req, res) {
+
+            let date = new Date()
+            res.send(date);
+        })
 
 
 module.exports = router
