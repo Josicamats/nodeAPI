@@ -6,7 +6,7 @@ var CryptoController = require('../controllers/controller'),
 
 
 router 
-        .get('/', (err, res) => {
+        .get('/status', (req, res) => {
         	res.status(200);
 	        res.json({ working: true });
 	        res.end();
@@ -17,9 +17,8 @@ router
         .get('/cuentas/saldo/:id', CryptoController.getOne)
         .patch('/cuentas', CryptoController.save)
         .put('/cuentas', CryptoController.save)
-        //Este no creo que lo utilicemos -> .delete('/eliminar/:id', CryptoController.delete)
-        //.use(CryptoController.error404)
-        .get('/btcvalue/:ids&:currency', function(req, res){
+        //Este no creo que lo utilicemos -> .delete('/:id', CryptoController.delete)
+        .get('/cyptos/:ids&:currency', function(req, res){
             let options = {
                 url: 'https://api.coingecko.com/api/v3/simple/price?ids='+req.params.ids+'&vs_currencies='+req.params.currency
             }
@@ -27,9 +26,15 @@ router
         })
         .get('/time', function(req, res) {
 
-            let date = new Date()
-            res.send(date);
+            let d ={
+                date : dateFormat('dd/mm/yyyy HH:MM')
+            } 
+            res.send(d);
         })
 
+
+
+
+        //.use(CryptoController.error404)       
 
 module.exports = router
