@@ -6,7 +6,7 @@ var CryptoController = require('../controllers/controller'),
 
 
 router 
-        .get('/api/status', (req, res) => {
+        .get('/status', (req, res) => {
         	res.status(200);
 	        res.json({ working: true });
 	        res.end();
