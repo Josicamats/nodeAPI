@@ -5,8 +5,8 @@ global.fetch = require("node-fetch")
 global.request = require('request')
 global.got = require('got')
 global.dateFormat = require('dateformat')
-const querystring = require('querystring')
 require('dotenv').config()
+
 const
     favicon = require('serve-favicon'),
     morgan = require('morgan'),
@@ -16,8 +16,8 @@ const
     publicDir = express.static(`${__dirname}/public`),
     viewDir = `${__dirname}/views`,
     port = (process.env.PORT || 3000),
+    cors = require('cors'),
     app = express()
-
 
 app
     //Configurando App
@@ -33,4 +33,8 @@ app
     .use(publicDir)
     .use(routes)
 
+    //enable cors
+    app.use(cors());
+
+    
 module.exports = app

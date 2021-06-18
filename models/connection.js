@@ -6,7 +6,15 @@ const {Schema} = mongoose
 const AccountSchema = new Schema({
         _id : String,
         balanceARS: Number,
-        balanceBTC : Number
+        balanceBTC : Number,
+        transactions:[ {
+            _id : String,
+            t_type : String,
+            t_date: Date,
+            t_amountARS: Number,
+            t_amountBTC: Number
+        }
+    ],
     },
     {
         collection : "accounts"
