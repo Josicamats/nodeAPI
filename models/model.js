@@ -191,7 +191,8 @@ CryptoModel.buyBTC = (data, cb) => {
                 var amountBTC = parseFloat(data.amountBTC)
                 connection.find({ _id : id },{}).distinct('balanceARS', function (err, balance){
                     if(err) cb(400,'Bad Request')
-                    var validateAmount = parseFloat(balance) - amountARS                          
+                    var validateAmount = parseFloat(balance) - amountARS 
+                    console.log(validateAmount)                         
                            if(validateAmount >= 0)
                            {
                             connection.findOneAndUpdate({_id: id}, {$push: {transactions: {_id: tid, t_type: "COMPRA BTC", t_date: dateFormat('isoUtcDateTime'), t_amountARS: amountARS, t_amountBTC: amountBTC}}, $inc: {balanceARS : -amountARS, balanceBTC: amountBTC}}, {useFindAndModify: false}, (err, docs) => {
@@ -285,21 +286,17 @@ CryptoModel.delete = (ids, cb) => {
             }
             else if(countDocuments == 1)
             {
-                connection.find({"transactions._id": id2},{}).distinct('transactions.t_type', function (err, type){
+                connection.find({"transactions._id": id2},{}, function (err, type){
                     if(err) cb(400,'Bad Request')
                     var type = type.pop()
-                    console.log(type)
-                    connection.find({ _id : id1 },{}).distinct('transactions.t_amountARS', function (err, ars){
-                        if(err) cb(400,'Bad Request')
-                        connection.find({ _id : id1 },{}).distinct('transactions.t_amountBTC', function (err, btc){
-                            if(err) cb(400,'Bad Request')
-                            connection.find({"transactions._id": id2},{}).distinct('transactions.t_date', function (err, tdate){
-                                if(err) cb(400,'Bad Request')
-                            
-                         var amountars = parseFloat(ars)
-                         var amountbtc = parseFloat(btc)
+                    var transactions = type.transactions.pop()
 
-                    var m = moment().diff(tdate.pop(), 'minutes')
+                    var type = transactions.t_type;
+                    var amountars = parseFloat(transactions.t_amountARS);
+                    var amountbtc = parseFloat(transactions.t_amountBTC);
+
+
+                    var m = moment().diff(transactions.t_date, 'minutes')
                     if(m > 5)
                     {
                         let error = new Error(),
@@ -343,10 +340,7 @@ CryptoModel.delete = (ids, cb) => {
                         }
                     }
                 
-                     })
-                })
-            })
-        })                
+                     })              
             }
         })
 }
