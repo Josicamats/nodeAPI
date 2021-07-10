@@ -64,6 +64,7 @@ CryptoModel.getOne = (id, cb) => {
 CryptoModel.save = (data, cb) => {
     var id = new mongoose.Types.ObjectId(data._id)
     var tid = new mongoose.Types.ObjectId()
+    var dateARS = moment().add(-3, 'hours')
     connection
         .countDocuments({_id : id})  
         .exec((err, countDocuments) => {
@@ -72,7 +73,7 @@ CryptoModel.save = (data, cb) => {
             {
                 var amount = parseFloat(data.amount)
                 if(amount > 1000){
-                    connection.create({_id : id, balanceARS : amount, balanceBTC : 0.00,  transactions : [{_id: tid, t_type: "DEPOSITO ARS", t_date: dateFormat('isoUtcDateTime'), t_amountARS: data.amount, t_amountBTC: 0} ] }, (err, docs) => {
+                    connection.create({_id : id, balanceARS : amount, balanceBTC : 0.00,  transactions : [{_id: tid, t_type: "DEPOSITO ARS", t_date: dateARS, t_amountARS: data.amount, t_amountBTC: 0} ] }, (err, docs) => {
                         if (err) cb(400,'Bad Request')
                         cb(201, docs)
                     })
@@ -94,7 +95,7 @@ CryptoModel.save = (data, cb) => {
             {
                 var amount = parseFloat(data.amount)
                 if(amount > 1000) {
-                    connection.findOneAndUpdate({_id: id}, {$push: {transactions: {_id: tid, t_type: "DEPOSITO ARS", t_date: dateFormat('isoUtcDateTime'), t_amountARS: amount, t_amountBTC: 0}}, $inc: {balanceARS: amount}}, {useFindAndModify: false}, (err, docs) => {
+                    connection.findOneAndUpdate({_id: id}, {$push: {transactions: {_id: tid, t_type: "DEPOSITO ARS", t_date: dateARS, t_amountARS: amount, t_amountBTC: 0}}, $inc: {balanceARS: amount}}, {useFindAndModify: false}, (err, docs) => {
                         if(err) cb(400,'Bad Request')
                         cb(200, docs)
                     })
@@ -136,13 +137,14 @@ CryptoModel.withdraw = (data, cb) => {
             }
             else if(countDocuments == 1)
             {
+                var dateARS = moment().add(-3, 'hours')
                 var amount = parseFloat(data.amount)
                 connection.find({ _id : id },{}).distinct('balanceARS', function (err, balance){
                     if(err) cb(400,'Bad Request')
                     var validateAmount = parseFloat(balance) - amount                         
                            if(validateAmount >= 0)
                            {
-                            connection.findOneAndUpdate({_id: id}, {$push: {transactions: {_id: tid, t_type: "RETIRO ARS", t_date: dateFormat('isoUtcDateTime'), t_amountARS: amount, t_amountBTC: 0}}, $inc: {balanceARS: -amount}}, {useFindAndModify: false}, (err, docs) => {
+                            connection.findOneAndUpdate({_id: id}, {$push: {transactions: {_id: tid, t_type: "RETIRO ARS", t_date: dateARS, t_amountARS: amount, t_amountBTC: 0}}, $inc: {balanceARS: -amount}}, {useFindAndModify: false}, (err, docs) => {
                                 if(err) cb(400,'Bad Request')
                                 cb(200, docs)
                             })
@@ -189,13 +191,14 @@ CryptoModel.buyBTC = (data, cb) => {
             {
                 var amountARS = parseFloat(data.amountARS)
                 var amountBTC = parseFloat(data.amountBTC)
+                var dateARS = moment().add(-3, 'hours')
                 connection.find({ _id : id },{}).distinct('balanceARS', function (err, balance){
                     if(err) cb(400,'Bad Request')
                     var validateAmount = parseFloat(balance) - amountARS 
                     console.log(validateAmount)                         
                            if(validateAmount >= 0)
                            {
-                            connection.findOneAndUpdate({_id: id}, {$push: {transactions: {_id: tid, t_type: "COMPRA BTC", t_date: dateFormat('isoUtcDateTime'), t_amountARS: amountARS, t_amountBTC: amountBTC}}, $inc: {balanceARS : -amountARS, balanceBTC: amountBTC}}, {useFindAndModify: false}, (err, docs) => {
+                            connection.findOneAndUpdate({_id: id}, {$push: {transactions: {_id: tid, t_type: "COMPRA BTC", t_date: dateARS, t_amountARS: amountARS, t_amountBTC: amountBTC}}, $inc: {balanceARS : -amountARS, balanceBTC: amountBTC}}, {useFindAndModify: false}, (err, docs) => {
                                 if(err) cb(400,'Bad Request')
                                 cb(200, docs)
                             })
@@ -238,13 +241,13 @@ CryptoModel.sellBTC = (data, cb) => {
             {
                 var amountARS = parseFloat(data.amountARS)
                 var amountBTC = parseFloat(data.amountBTC) 
-                //amountBTC = Math.abs(amountBTC)
+                var dateARS = moment().add(-3, 'hours')
                 connection.find({ _id : id },{}).distinct('balanceBTC', function (err, balance){
                     if(err) cb(400,'Bad Request')
                     var validateAmount = parseFloat(balance) - amountBTC                          
                            if(validateAmount >= 0)
                            {
-                            connection.findOneAndUpdate({_id: id}, {$push: {transactions: {_id: tid, t_type: "VENTA BTC", t_date: dateFormat('isoUtcDateTime'), t_amountARS: amountARS, t_amountBTC: amountBTC}}, $inc: {balanceARS : amountARS, balanceBTC: -amountBTC}}, {useFindAndModify: false}, (err, docs) => {
+                            connection.findOneAndUpdate({_id: id}, {$push: {transactions: {_id: tid, t_type: "VENTA BTC", t_date: dateARS, t_amountARS: amountARS, t_amountBTC: amountBTC}}, $inc: {balanceARS : amountARS, balanceBTC: -amountBTC}}, {useFindAndModify: false}, (err, docs) => {
                                 if(err) cb(400,'Bad Request')
                                 cb(200, docs)
                             })
@@ -295,18 +298,19 @@ CryptoModel.delete = (ids, cb) => {
                     var amountars = parseFloat(transactions.t_amountARS);
                     var amountbtc = parseFloat(transactions.t_amountBTC);
 
-
-                    var m = moment().diff(transactions.t_date, 'minutes')
-                    if(m > 5)
+                    var mom = moment().add(-3, 'hours')
+                    var m = mom.diff(transactions.t_date, 'minutes')
+                    console.log(m)
+                    if(m > 1)
                     {
                         let error = new Error(),
                           locals = {
-                                 title: 'error 403',
-                                 description: 'Forbidden: No puedes eliminar las transacciones luego de 5 minutos',
+                                 title: 'error 409',
+                                 description: 'Conflict: No puedes eliminar las transacciones luego de 5 minutos',
                                  error: error
                              }
-                             error.status = 403
-                             cb(403, locals)
+                             error.status = 409
+                             cb(409, locals)
                     }
                     else
                      {
@@ -314,28 +318,28 @@ CryptoModel.delete = (ids, cb) => {
                         {
                             connection.findOneAndUpdate({_id: id1},{ $pull: {transactions: {_id: id2}}, $inc: {balanceARS : amountars, balanceBTC: -amountbtc}}, {useFindAndModify: false}, (err, docs) => {
                                 if(err) cb(400,'Bad Request')
-                                cb(200, docs) 
+                                cb(204, '') 
                             })
                         }
                         else if(type  === 'VENTA BTC')
                         {
                             connection.findOneAndUpdate({_id: id1},{ $pull: {transactions: {_id: id2}}, $inc: {balanceARS : -amountars, balanceBTC: amountbtc}}, {useFindAndModify: false}, (err, docs) => {
                                 if(err) cb(400,'Bad Request')
-                                cb(200, docs) 
+                                cb(204, '') 
                             })
                         }
                         else if(type === 'DEPOSITO ARS')
                         {
                             connection.findOneAndUpdate({_id: id1},{ $pull: {transactions: {_id: id2}}, $inc: {balanceARS : -amountars}}, {useFindAndModify: false}, (err, docs) => {
                                 if(err) cb(400,'Bad Request')
-                                cb(200, docs) 
+                                cb(204, '') 
                             })
                         }
                         else if(type === 'RETIRO ARS')
                         {
                             connection.findOneAndUpdate({_id: id1},{ $pull: {transactions: {_id: id2}}, $inc: {balanceARS : amountars,}}, {useFindAndModify: false}, (err, docs) => {
                                 if(err) cb(400,'Bad Request')
-                                cb(200, docs) 
+                                cb(204, '') 
                             })
                         }
                     }
